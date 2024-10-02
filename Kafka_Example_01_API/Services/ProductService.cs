@@ -24,7 +24,6 @@
             {
                 _logger.LogError(e.Message);
                 throw;
-
             }
             return productList;
         }
