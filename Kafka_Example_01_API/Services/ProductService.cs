@@ -19,7 +19,6 @@
             try
             {
                 productList = _inMem.Memory.Values.ToList();
-
             }
             catch (Exception e)
             {
@@ -57,91 +56,110 @@
             }
         }
 
-        public TableProduct UpdatePrice(decimal productId, decimal price)
+        public TableProduct UpdateQuantity(string key, decimal productId, decimal quantity, bool increase)
         {
-            var p = _inMem.Memory.FirstOrDefault(x => x.Key == productId.ToString()).Value;
+            var p = _inMem.Memory.FirstOrDefault(x => x.Key == key).Value;
 
-            TableProduct product = new TableProduct();
-
-            product.Id       = p.Id;
-            product.Name     = p.Name;
-            product.Quantity = p.Quantity;
-            product.Price    = p.Price;
-
-            _inMem.Memory.TryGetValue(productId.ToString(), out p);
-            if (price <= 0)
-            {
-                _logger.LogError("Price must be greater than 0");
-            }
-            else
-            {
-                p.Price = price;
-                var kafkaProducer = _producerManager.GetProducer<string, string>("1");
-                var message       = new Message<string, string>
-                {
-                    Value   = JsonSerializer.Serialize(p),
-                    Headers = new Headers
-                    {
-                        { "eventname", Encoding.UTF8.GetBytes("UpdatePrice") },
-                    }
-                };
-                _inMem.Memory.Remove(productId.ToString());
-                _inMem.Memory.Add(p.Id.ToString(), p);
-                kafkaProducer.Produce(message);
-            }
-            
-            return p;
-        }
-
-        public TableProduct UpdateQuantity(decimal productId, decimal quantity, bool increase)
-        {
-            var p = _inMem.Memory.FirstOrDefault(x => x.Key == productId.ToString()).Value;
-
-            TableProduct product = new TableProduct();
-            product.Id = p.Id;
-            product.Name = p.Name;
-            product.Quantity = p.Quantity;
-            product.Price = p.Price;
             if (p != null)
             {
+                _inMem.Memory.TryGetValue(key, out p);
+                if (increase)
                 {
-                    _inMem.Memory.TryGetValue(productId.ToString(), out p);
-                    if (increase)
+                    p.Quantity += quantity;
+                }
+                else
+                {
+                    if (p.Quantity < quantity)
                     {
-                        p.Quantity += quantity;
+                        p.Quantity = p.Quantity;
+                        _logger.LogError("Cannot Update Quantity");
                     }
                     else
                     {
-                        if (p.Quantity < quantity)
-                        {
-                            p.Quantity = p.Quantity;
-                            _logger.LogError("Không thể cập nhật quantity");
-                        }
-                        else
-                        {
-                            p.Quantity -= quantity;
-                            
-                        }
+                        p.Quantity -= quantity;
                     }
-                    var kafkaProducer = _producerManager.GetProducer<string, string>("1");
-                    var message = new Message<string, string>
-                    {
-                        Value = JsonSerializer.Serialize(p),
-                        Headers = new Headers
-                                {
-                                    { "eventname", Encoding.UTF8.GetBytes("UpdateQuantity") },
-                                }
-                    };
-
-                    kafkaProducer.Produce(message);
-                    p.Id = product.Id;
                 }
-                return p;
+                
+                var prod = new UpdateQuantityDTO
+                {
+                    ProductId = productId,
+                    Quantity  = quantity,
+                    Increase  = increase
+                };
+
+                var kafkaProducer = _producerManager.GetProducer<string, string>("1");
+                var message       = new Message<string, string>
+                {
+                    Value   = JsonSerializer.Serialize(prod),
+                    Headers = new Headers
+                    {
+                        { "eventname", Encoding.UTF8.GetBytes("UpdateQuantity") },
+                    }
+                };
+
+                kafkaProducer.Produce(message);
+
+                p.Id = productId;
+
+                _inMem.Memory.Remove(key);
+                _inMem.Memory.Add(p.Id.ToString(), p);
             }
             else
             {
-                throw new Exception("ID không tồn tại!");
+                _logger.LogError("ID Not Found");
             }
+            return p;
         }
+
+        public TableProduct UpdatePrice(string key, decimal productId, decimal price)
+        {
+            var p = _inMem.Memory.FirstOrDefault(x => x.Key == key).Value;
+
+            _inMem.Memory.TryGetValue(key, out p);
+            if (p != null)
+            {
+                if (price <= 0)
+                {
+                    _logger.LogError("Price must be greater than 0");
+                }
+                else
+                {
+                    p.Price = price;
+                    _inMem.Memory.Remove(productId.ToString());
+                    _inMem.Memory.Add(p.Id.ToString(), p);
+
+                    var prod = new UpdatePriceDTO
+                    {
+                        ProductId = productId,
+                        Price     = price
+                    };
+
+                    var kafkaProducer = _producerManager.GetProducer<string, string>("1");
+                    var message       = new Message<string, string>
+                    {
+                        Value   = JsonSerializer.Serialize(prod),
+                        Headers = new Headers
+                    {
+                        { "eventname", Encoding.UTF8.GetBytes("UpdatePrice") },
+                    }
+                    };
+
+                    kafkaProducer.Produce(message);
+
+                    p.Id = productId;
+
+                    _inMem.Memory.Remove(key);
+                    _inMem.Memory.Add(p.Id.ToString(), p);
+                }
+            }
+            else
+            {
+                _logger.LogError("Not Found Item in Memory");
+            }
+            return p;
+
+        }
+
+
     }
 }

@@ -26,7 +26,7 @@
                     var product = JsonSerializer.Deserialize<TableProduct>(result.Message.Value);
 
                     Guid newGuid = Guid.NewGuid();
-                    int id       = newGuid.GetHashCode();
+                    int id       = Math.Abs(newGuid.GetHashCode());
                     product.Id   = id;
 
                     _logger.LogInformation("Inserting new product: {@Product}", product);
@@ -34,18 +34,23 @@
                     _productService.InsertProduct(product);
                     break;
                 case "UpdateQuantity":
+
+                    _logger.LogInformation(result.Message.Key);
                     _logger.LogInformation(result.Message.Value);
+
                     var prod = JsonSerializer.Deserialize<UpdateQuantityDTO>(result.Message.Value);
+                    var key = result.Message.Key;
 
                     _logger.LogInformation("Updating quantity for product ID: {ProductId}, New Quantity: {Quantity}, Increase: {Increase}",
                         prod.ProductId, prod.Quantity, prod.Increase);
 
-                    _productService.UpdateQuantity(prod.ProductId, prod.Quantity, prod.Increase);
+                    _productService.UpdateQuantity(key, prod.ProductId, prod.Quantity, prod.Increase);
                     break;
                 case "UpdatePrice":
                     var p = JsonSerializer.Deserialize<UpdatePriceDTO>(result.Message.Value);
+                    var k = result.Message.Key;
                     _logger.LogInformation("Updating price for product ID: {ProductId}, New Price: {Price}", p.ProductId, p.Price);
-                    _productService.UpdatePrice(p.ProductId, p.Price);
+                    _productService.UpdatePrice(k, p.ProductId, p.Price);
                     break;
                 default:
                     _logger.LogWarning("Received unknown event: {Event}", productEvent);

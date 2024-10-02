@@ -40,11 +40,12 @@
 
                         TableProduct p = new TableProduct();
 
+                        p.Id         = product.Id;
                         p.Price      = product.Price;
                         p.Name       = product.Name;
                         p.Quantity   = product.Quantity;
 
-                        await _insertProductCommandHandler.HandleAsync(new InsertProductCommand(p.Name, p.Price, p.Quantity));
+                        await _insertProductCommandHandler.HandleAsync(new InsertProductCommand(p.Id, p.Name, p.Price, p.Quantity));
                         
                         _logger.LogInformation("[PersistanceConsuming] Inserted product: {@Product}", product);
                         

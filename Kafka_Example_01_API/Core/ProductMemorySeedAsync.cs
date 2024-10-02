@@ -1,8 +1,4 @@
-﻿using Kafka_Example_01_API.Core.InMemories;
-using Kafka_Example_01_API.Models;
-using Microsoft.EntityFrameworkCore;
-
-namespace Kafka_Example_01_API.Core
+﻿namespace Kafka_Example_01_API.Core
 {
     public class ProductMemorySeedAsync
     {

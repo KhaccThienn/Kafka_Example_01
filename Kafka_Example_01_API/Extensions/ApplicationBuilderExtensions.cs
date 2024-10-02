@@ -1,4 +1,6 @@
-﻿namespace Kafka_Example_01_API.Extensions
+﻿using Kafka_Example_01_API.Core.Models;
+
+namespace Kafka_Example_01_API.Extensions
 {
     public static class ApplicationBuilderExtensions
     {

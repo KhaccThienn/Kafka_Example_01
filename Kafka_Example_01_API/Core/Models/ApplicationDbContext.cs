@@ -1,4 +1,4 @@
-﻿namespace Kafka_Example_01_API.Models;
+﻿namespace Kafka_Example_01_API.Core.Models;
 
 public partial class ApplicationDbContext : DbContext
 {

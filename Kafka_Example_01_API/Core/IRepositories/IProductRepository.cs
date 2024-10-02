@@ -1,4 +1,6 @@
-﻿namespace Kafka_Example_01_API.Core.IRepositories
+﻿using Kafka_Example_01_API.Core.Models;
+
+namespace Kafka_Example_01_API.Core.IRepositories
 {
     public interface IProductRepository
     {

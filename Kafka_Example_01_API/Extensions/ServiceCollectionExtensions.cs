@@ -1,4 +1,8 @@
-﻿namespace Kafka_Example_01_API.Extensions
+﻿using Kafka_Example_01_API.Commands.CommandModels;
+using Kafka_Example_01_API.Core.Models;
+
+
+namespace Kafka_Example_01_API.Extensions
 {
     public static class ServiceCollectionExtensions
     {
@@ -17,6 +21,7 @@
             services.AddSingleton<ProductMemory>();
             services.AddSingleton<IProductPersistenceService, ProductPersistenceService>();
             services.AddSingleton<IProductService, ProductService>();
+            services.AddSingleton<IProductProducer, ProductProducer>();
 
             return services;
         }

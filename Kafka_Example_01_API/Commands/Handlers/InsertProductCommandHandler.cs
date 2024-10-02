@@ -1,6 +1,4 @@
-﻿using static Confluent.Kafka.ConfigPropertyNames;
-
-namespace Kafka_Example_01_API.Handlers
+﻿namespace Kafka_Example_01_API.Commands.Handlers
 {
     public class InsertProductCommandHandler : ICommandHandler<InsertProductCommand>
     {
@@ -13,6 +11,7 @@ namespace Kafka_Example_01_API.Handlers
         {
             var product = new TableProduct
             {
+                Id       = command.id,
                 Name     = command.Name,
                 Price    = command.Price,
                 Quantity = command.Quantity

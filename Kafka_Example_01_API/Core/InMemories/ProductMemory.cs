@@ -1,4 +1,6 @@
 ﻿
+using Kafka_Example_01_API.Core.Models;
+
 namespace Kafka_Example_01_API.Core.InMemories
 {
     public class ProductMemory

@@ -1,8 +1,4 @@
-﻿using Kafka_Example_01_API.Core.IServices;
-using Microsoft.EntityFrameworkCore;
-using static Confluent.Kafka.ConfigPropertyNames;
-
-namespace Kafka_Example_01_API.Services
+﻿namespace Kafka_Example_01_API.Services
 {
     public class ProductPersistenceService : IProductPersistenceService
     {
@@ -41,8 +37,8 @@ namespace Kafka_Example_01_API.Services
             // Use dbContext here
             var product = await dbContext.TableProducts.FirstOrDefaultAsync(p => p.Id == productId);
 
-            bool flag = true;
-            product.Id = productId;
+            bool flag     = true;
+            product.Id    = productId;
             product.Price = price;
 
             if (price < 0)
@@ -67,8 +63,8 @@ namespace Kafka_Example_01_API.Services
         public async Task<TableProduct> UpdateQuantity(decimal productId, decimal quantity, bool Increase)
         {
             using var scope = _scopeFactory.CreateScope();
-            var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-            var product = await dbContext.TableProducts.FirstOrDefaultAsync(p => p.Id == productId);
+            var dbContext   = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            var product     = await dbContext.TableProducts.FirstOrDefaultAsync(p => p.Id == productId);
 
             bool flag = true;
             if (product != null)
@@ -79,13 +75,14 @@ namespace Kafka_Example_01_API.Services
                 }
                 else
                 {
-                    product.Quantity -= quantity;
                     if (quantity > product.Quantity)
                     {
                         flag = false;
+                    } else
+                    {
+                        product.Quantity -= quantity;
                     }
                 }
-
                 if (flag)
                 {
                     try
@@ -103,11 +100,7 @@ namespace Kafka_Example_01_API.Services
             {
                 _logger.LogError("Product Not Found");
             }
-
-
             return product;
         }
-
-
     }
 }

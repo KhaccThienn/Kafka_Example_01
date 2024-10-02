@@ -2,7 +2,7 @@
 {
     public class UpdatePriceDTO
     {
-        public int     ProductId { get; set; }
+        public decimal ProductId { get; set; }
         public decimal Price     { get; set; }
     }
 }

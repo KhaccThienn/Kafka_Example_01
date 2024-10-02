@@ -1,4 +1,6 @@
-﻿namespace Kafka_Example_01_API.Core.IServices
+﻿using Kafka_Example_01_API.Core.Models;
+
+namespace Kafka_Example_01_API.Core.IServices
 {
     public interface IProductService
     {
@@ -6,8 +8,8 @@
 
         TableProduct InsertProduct(TableProduct p);
 
-        TableProduct UpdatePrice(decimal productId, decimal price);
+        TableProduct UpdatePrice(string key, decimal productId, decimal price);
 
-        TableProduct UpdateQuantity(decimal productId, decimal quantity, bool increase);
+        TableProduct UpdateQuantity(string key, decimal productId, decimal quantity, bool increase);
     }
 }

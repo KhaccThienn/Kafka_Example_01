@@ -1,4 +1,4 @@
-﻿namespace Kafka_Example_01_API.Handlers
+﻿namespace Kafka_Example_01_API.Commands.Handlers
 {
     public class UpdateProductQuantityCommandHandler : ICommandHandler<UpdateQuantityCommand>
     {
