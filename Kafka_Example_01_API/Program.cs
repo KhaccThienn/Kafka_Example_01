@@ -47,6 +47,6 @@ app.MapControllers();
 app.LoadProductMemoryData();
 
 // Use Kafkabuss
-app.UseCustomKafkaMessageBus();
+app.UseCustomKafkaMessageBus(); 
 
 app.Run();
